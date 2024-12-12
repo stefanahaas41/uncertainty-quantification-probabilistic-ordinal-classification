@@ -5,7 +5,7 @@ from lightgbm import LGBMClassifier
 from scipy.stats import entropy
 from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, confusion_matrix, cohen_kappa_score
 from sklearn.model_selection import StratifiedKFold
-from util.measures.binary_decompositions import binary_ordinal_entropy, binary_ordinal_margin
+from util.measures.binary_decompositions import binary_ordinal_entropy, binary_ordinal_margin, binary_ordinal_variance
 from util.measures.coefficient_of_agreement import coefficient_of_agreement_std
 from util.measures.consensus import consensus
 from util.measures.dfu import dfu
@@ -67,16 +67,16 @@ def uncertainty_experiment(data_df, enc, label, le, model, dataset):
     overall_result_df.to_csv(model + "_" + dataset + "_result.csv", index=False)
 
     # Save PRR plots
-    for metric_key, metric_values in overall_prr_plots.items():
-        for measure_key, measure_values in metric_values.items():
-            df = pd.DataFrame(overall_prr_plots[metric_key][measure_key])
-            if metric_key == 'ACC':
-                x_label = 'MCR'
-            else:
-                x_label = metric_key
-            plot_rejection_curve_df(df, ("ci", 95), x_label,
-                                    "./prr_plots/" + dataset + "_" + x_label + "_" + measure_key + ".pdf",
-                                    measure_key)
+    # for metric_key, metric_values in overall_prr_plots.items():
+    #     for measure_key, measure_values in metric_values.items():
+    #         df = pd.DataFrame(overall_prr_plots[metric_key][measure_key])
+    #         if metric_key == 'ACC':
+    #             x_label = 'MCR'
+    #         else:
+    #             x_label = metric_key
+    #         plot_rejection_curve_df(df, ("ci", 95), x_label,
+    #                                 "./prr_plots/" + dataset + "_" + x_label + "_" + measure_key + ".pdf",
+    #                                 measure_key)
 
     return result_prr_df, result_prr_raw_df, combined_raw_prr_data
 
@@ -105,7 +105,7 @@ def prepare_prr_result(dataset, overall_result_prr, u_measures):
                 for i in range(len(mse_mean))]
     }
     measures = list(u_measures.keys())
-    measures.remove("Random")
+    measures.remove("random")
 
     acc_results = overall_result_prr["ACC"]
     mae_results = overall_result_prr["MAE"]
@@ -171,6 +171,7 @@ def main_experiment_part(X_test, X_train, le, model, overall_result_prr, overall
     u_dfu = np.apply_along_axis(dfu, 1, y_pred_proba)
     u_ordinal_binary_entropy = np.apply_along_axis(binary_ordinal_entropy, 1, y_pred_proba)
     u_ordinal_binary_margin = np.apply_along_axis(binary_ordinal_margin, 1, y_pred_proba)
+    u_ordinal_binary_variance = np.apply_along_axis(binary_ordinal_variance, 1, y_pred_proba)
     y_risk_abs = empirical_risk(y_pred_proba, "l1")
     u_absolute = risk_of_prediction(y_risk_abs, y_pred_proba, "l1")
     y_risk_squared = empirical_risk(y_pred_proba, "l2")
@@ -178,20 +179,21 @@ def main_experiment_part(X_test, X_train, le, model, overall_result_prr, overall
     random = np.random.random_sample(y_pred.shape)
 
     u_measures = {
-        "Confidence": u_confidence,
-        "Margin": u_margin,
-        "Entropy": u_entropy,
-        "Variance": u_variance,
-        "Consensus (Tastle)": u_consensus_tastle,
-        "Consensus (Leik)": u_consensus_leik,
-        "Consensus (Blair)": u_consensus_blair,
-        "Binary (Entropy)": u_ordinal_binary_entropy,
-        "Binary (Margin)": u_ordinal_binary_margin,
-        "Risk (Absolute)": u_absolute,
-        "Risk (Squared)": u_squared,
-        "Agreement": u_agreement,
-        "Dfu": u_dfu,
-        "Random": random
+        "CONF": u_confidence,
+        "MARG": u_margin,
+        "ENT": u_entropy,
+        "VAR": u_variance,
+        "$\\text{CONS}_{\\,\\text{Cns}}$": u_consensus_tastle,
+        "$\\text{CONS}_{\\,C_1}$": u_consensus_leik,
+        "$\\text{CONS}_{\\,C_2}$": u_consensus_blair,
+        "$\\text{CONS}_{\\,C_A}$": u_agreement,
+        "DFU": u_dfu,
+        "$\\text{ORD}_{\\,\\text{ENT}}$": u_ordinal_binary_entropy,
+        "$\\text{ORD}_{\\,\\text{MARG}}$": u_ordinal_binary_margin,
+        "$\\text{ORD}_{\\,\\text{VAR}}$": u_ordinal_binary_variance,
+        "$R_{l_1}$": u_absolute,
+        "$R_{l_2}$": u_squared,
+        "random": random
     }
 
     metrics = ["ACC", "MAE", "MSE"]

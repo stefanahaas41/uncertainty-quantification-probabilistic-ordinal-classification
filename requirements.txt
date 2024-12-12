@@ -2,7 +2,6 @@ numpy==1.24.2
 pandas==2.0.0
 scikit-learn==1.2.2
 category_encoders==2.6.0
-xgboost==1.7.5
 matplotlib==3.7.1
 seaborn==0.12.2
 lightgbm==4.1.0

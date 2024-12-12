@@ -43,7 +43,7 @@ def rejection_curve(metrics, u_measures, y_pred_proba, y_test, le):
 
         for measure_name, measure_result in u_measures.items():  # Entropy, Variance, etc.
 
-            if measure_name != 'Random':
+            if measure_name != 'random':
                 prr_plots[metric][measure_name] = {}
 
             percentages = []
@@ -133,7 +133,7 @@ def rejection_curve(metrics, u_measures, y_pred_proba, y_test, le):
                 result["Measure"].append(measure_name)
                 result["Metric"].append(metric)
 
-            if measure_name != 'Random':
+            if measure_name != 'random':
 
                 # Assemble prediction rejection ratio (PRR) for metric
                 percentages = np.array(percentages)
@@ -181,10 +181,10 @@ def plot_rejection_curve_df(df, errorbar, metric, out, title, mlflow_log=False):
     measures = df["Type"].unique()
     colors = sns.color_palette()
 
-    custom_palette = {"Random": 'grey'}
+    custom_palette = {"random": 'grey'}
 
     for i, measure in enumerate(measures):
-        if measure != "Random":
+        if measure != "random":
             custom_palette[measure] = colors[i]
     # Round
     df['Rejection'] = df['Rejection'].round(0)
@@ -192,6 +192,6 @@ def plot_rejection_curve_df(df, errorbar, metric, out, title, mlflow_log=False):
     plt.figure()
     g = sns.lineplot(data=df, x="Rejection", y="Performance", hue="Type", style="Type", errorbar=errorbar,
                      palette=custom_palette)
-    g.set(xlabel='Rejection in %', ylabel=metric, title=title)
+    g.set(xlabel='Rejection in %', ylabel=metric, title="")
     plt.gca().legend().set_title('')
     plt.savefig(out, dpi=300, bbox_inches='tight')
