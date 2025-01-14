@@ -1,6 +1,7 @@
 import unittest
 
 import numpy as np
+from numpy.testing import assert_allclose
 
 
 def coefficient_of_agreement_std(p):
@@ -167,3 +168,13 @@ class CoefficientOfAgreementTests(unittest.TestCase):
     def testQ(self):
         A = coefficient_of_agreement_std([0.5, 0, 0, 0.5, 0])
         self.assertEqual(0.292, round(A, 3))
+
+    def test_invariance(self):
+        o1 = coefficient_of_agreement_std([0.1, 0.3, 0.4, 0.15, 0.05])
+        o2 = coefficient_of_agreement_std([0.05, 0.15, 0.4, 0.3, 0.1])
+        assert_allclose(o1, o2, rtol=1e-7, atol=0)
+
+    def test_invariance_even(self):
+        o1 = coefficient_of_agreement_std([0.1, 0.3, 0.4, 0.2])
+        o2 = coefficient_of_agreement_std([0.2, 0.4, 0.3, 0.1])
+        assert_allclose(o1, o2, rtol=1e-7, atol=0)

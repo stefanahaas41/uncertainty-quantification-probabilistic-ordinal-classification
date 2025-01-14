@@ -1,6 +1,7 @@
 import unittest
 
 import numpy as np
+from numpy.testing import assert_allclose
 
 
 def consensus(p):
@@ -40,3 +41,18 @@ class ConsensusTests(unittest.TestCase):
     def test_consensus_full_agreement2(self):
         cons = consensus([1, 0, 0, 0, 0])
         self.assertEqual(1, cons)
+
+    def test_consensus_invariance(self):
+        o1 = consensus([0.1, 0.3, 0.4, 0.15, 0.05])
+        o2 = consensus([0.05, 0.15, 0.4, 0.3, 0.1])
+        assert_allclose(o1, o2, rtol=1e-7, atol=0)
+
+    def test_ordinal_consensus_invariance2(self):
+        o1 = consensus([0.2, 0.3, 0.1, 0.4])
+        o2 = consensus([0.4, 0.1, 0.3, 0.2])
+        assert_allclose(o1, o2, rtol=1e-7, atol=0)
+
+    def test_ordinal_consensus_invariance3(self):
+        o1 = consensus([0.2, 0.5, 0.3])
+        o2 = consensus([0.3, 0.5, 0.2])
+        assert_allclose(o1, o2, rtol=1e-7, atol=0)

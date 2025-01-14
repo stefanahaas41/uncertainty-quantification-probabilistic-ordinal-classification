@@ -1,7 +1,7 @@
 import csv
+import os
 
 import pandas as pd
-import seaborn as sns
 
 from experiments.abalone import abalone
 from experiments.automobile import automobile
@@ -27,14 +27,10 @@ from experiments.tae import tae
 from experiments.triazines import triazines
 from experiments.white_wine import white_wine
 
-MODEL = "LGBM"
+MODELS = ['BETA', 'QWK', 'TRI', 'LGBM', 'SIMPLE', 'MLP', 'SIMPLE_MLP']
 
 
 def main():
-    sns.set_theme(context='paper', style='ticks', font_scale=1.4, font="serif", rc={
-        "text.usetex": True
-    })
-
     # Run experiments
     triazines_prr_df, triazines_prr_raw_df, triazines_prr_data_df = triazines.run(MODEL)
     machine_prr_df, machine_prr_raw_df, machine_prr_data_df = machine.run(MODEL)
@@ -139,13 +135,22 @@ def main():
         white_wine_raw_prr_data
     ])
 
-    result_df.to_csv(MODEL + "_prr_result.csv", sep='&', lineterminator="\\\\\n", quoting=csv.QUOTE_NONE, quotechar='',
+    result_df.to_csv('./results/' + MODEL + "/prr_result.csv", sep='&', lineterminator="\\\\\n", quoting=csv.QUOTE_NONE,
+                     quotechar='',
                      escapechar=' ', index=False)
 
-    result_raw_df.to_csv(MODEL + "_prr_result_raw.csv", index=False)
+    result_raw_df.to_csv('./results/' + MODEL + "/prr_result_raw.csv", index=False)
 
-    result_prr_raw_df.to_csv(MODEL + "_prr_result_total_raw.csv", index=False)
+    result_prr_raw_df.to_csv('./results/' + MODEL + "/prr_result_total_raw.csv", index=False)
 
 
 if __name__ == '__main__':
-    main()
+    global MODEL
+    for m in MODELS:
+        # Create result folder
+        outdir = './results/' + m
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+
+        MODEL = m
+        main()

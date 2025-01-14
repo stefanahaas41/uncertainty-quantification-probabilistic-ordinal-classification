@@ -1,6 +1,7 @@
 import unittest
 
 import numpy as np
+from numpy.testing import assert_allclose
 from scipy.stats import entropy
 
 
@@ -49,6 +50,11 @@ class BinMarginTests(unittest.TestCase):
         binary_ord_conf = binary_ordinal_margin(p)
         self.assertEqual(0, binary_ord_conf)
 
+    def test_invariance(self):
+        o1 = binary_ordinal_margin([0.1, 0.3, 0.4, 0.15, 0.05])
+        o2 = binary_ordinal_margin([0.05, 0.15, 0.4, 0.3, 0.1])
+        assert_allclose(o1, o2, rtol=1e-7, atol=0)
+
 
 class BinVarianceTests(unittest.TestCase):
     def test_bimodal(self):
@@ -66,6 +72,11 @@ class BinVarianceTests(unittest.TestCase):
         binary_ord_variance = binary_ordinal_variance(p)
         self.assertEqual(0, binary_ord_variance)
 
+    def test_invariance(self):
+        o1 = binary_ordinal_variance([0.1, 0.3, 0.4, 0.15, 0.05])
+        o2 = binary_ordinal_variance([0.05, 0.15, 0.4, 0.3, 0.1])
+        assert_allclose(o1, o2, rtol=1e-7, atol=0)
+
 
 class BinEntropyTests(unittest.TestCase):
     def test_bimodal(self):
@@ -82,3 +93,8 @@ class BinEntropyTests(unittest.TestCase):
         p = [0, 1, 0]
         bin_orinal_entropy = binary_ordinal_entropy(p)
         self.assertEqual(0, bin_orinal_entropy)
+
+    def test_invariance(self):
+        o1 = binary_ordinal_entropy([0.1, 0.3, 0.4, 0.15, 0.05])
+        o2 = binary_ordinal_entropy([0.05, 0.15, 0.4, 0.3, 0.1])
+        assert_allclose(o1, o2, rtol=1e-7, atol=0)

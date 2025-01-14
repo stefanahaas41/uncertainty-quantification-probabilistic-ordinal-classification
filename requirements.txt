@@ -5,3 +5,7 @@ category_encoders==2.6.0
 matplotlib==3.7.1
 seaborn==0.12.2
 lightgbm==4.1.0
+skorch==1.0.0
+torch==2.5.1
+pycalib
+dlordinal==2.2.1
