@@ -3,7 +3,7 @@
 Source code for the experiments in Haas, S., & Hüllermeier, E. (2025). Uncertainty Quantification in Ordinal Classification: A Comparison of Measures. International Journal of Approximate Reasoning, 109479.
 
 ## Citation
-```
+```bibtex
 @article{haas2025uncertainty,
   author       = {Stefan Haas and
                   Eyke H{\"{u}}llermeier},
